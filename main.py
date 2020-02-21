@@ -1,4 +1,5 @@
 from trie import Trie
+from myset import MySet
 import os
 
 from myparser import Parser
@@ -41,6 +42,54 @@ def initialize():
 
 initialize()
 
+
+def addWordsToSets(reci):
+    list1 = trie.__search__(reci[0])
+    list2 = trie.__search__(reci[1])
+    set1 = MySet()
+    set2 = MySet()
+
+    for key, val in list1.items():
+        set1.__addToSet__(key, val)
+    for key, val in list2.items():
+        set2.__addToSet__(key, val)
+    return set1, set2
+
+
+def pretrazi(reci):
+    reci = reci.strip()
+    if " OR " in reci:
+        reci = reci.split(" OR ")
+        set1, set2 = addWordsToSets(reci)
+        final_arr = set1.__union__(set2)
+
+    elif " AND " in reci:
+        reci = reci.split(" AND ")
+        set1, set2 = addWordsToSets(reci)
+        final_arr = set1.__intersection__(set2)
+
+    elif " NOT " in reci:
+        reci = reci.split(" NOT ")
+        set1, set2 = addWordsToSets(reci)
+        final_arr = set1.__complement__(set2)
+
+    else:
+        reci = reci.split(" ")
+        print(reci)
+        final_set = MySet()
+        for rec in reci:
+            lista = trie.__search__(rec)
+            for key, val in lista.items():
+                final_set.__addToSet__(key, val)
+        final_arr = final_set.list
+
+    if len(final_arr) > 0:
+        for val in final_arr:
+            print(val.abspath)
+    else:
+        print("Trazene reci ne postoje")
+
+
 while True:
     try:
         print("\n" + "Trenutni direktorijum je: " + direktorijum + "\n")
@@ -53,13 +102,8 @@ while True:
             initialize()
         elif opcija == 2:
             reci = input("Unesite reci za pretragu:\t")
-            retVal = trie.__search__(reci)
-            if len(retVal) > 0:
-                for val in retVal:
-                    print(val)
-            else:
-                print("Trazene reci ne postoje")
-        # elif opcija == 3:
+            pretrazi(reci)  # elif opcija == 3:
 
-    except:
+    except Exception as e:
+        print(e)
         print("--------------------Unesite broj kao opciju.--------------------- \n")
