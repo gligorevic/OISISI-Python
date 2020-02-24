@@ -54,13 +54,15 @@ class AdjGraph:
 
         new_ranks = []
         lista_kljuceva = []
+        n = 100
         d = 0.85
+
         for i in self.vertices.keys():
             lista_kljuceva.append(i)
             self.page_ranks[i] = 1 / len(self.vertices.keys())
-        n = 50
+
         while n:
-            for v, i in sorted(self.edge_indices.items()):
+            for v, i in self.edge_indices.items():
                 # print(v, i)
                 v_rank = 0
                 for j in range(len(self.edges)):
