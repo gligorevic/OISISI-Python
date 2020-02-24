@@ -1,24 +1,19 @@
 from trie import Trie
 from myset import MySet
-from graph import Graph
-# from AdjMatGraph import Graph
-# from AdjMatGraph import Vertex
+import AdjMatGraph
 import os
 
 from myparser import Parser
 
 parser = Parser()
-g = Graph(True)
-
-V = set()
-# vertices = {}
+g = AdjMatGraph.AdjGraph()
 
 vidjeno_strana = 0
 step = 5
 broj_strana = step
-
 poslednja_pretraga = ''
 direktorijum = ''
+
 trie = Trie()
 
 final_arr = []
@@ -46,30 +41,25 @@ unosDirektorijuma()
 
 def initialize():
     global trie
-    E = []
+    # E = []
+    # vertices = {}
     for dirpath, dirnames, filenames in os.walk(direktorijum):
         for fileName in filenames:
             extension = os.path.splitext(fileName)[1]
             if extension == ".html" or extension == ".htm":
                 links, words = parser.parse(os.path.join(dirpath, fileName))
                 for link in links:
-                    g.insert_edge(g.insert_vertex(os.path.join(dirpath, fileName)), g.insert_vertex(link))
+                    g.add_edge(g.add_vertex(os.path.join(dirpath, fileName)), g.add_vertex(link))
                 for index, word in enumerate(words):
                     trie.__addToTrie__(
                         word, index, os.path.join(dirpath, fileName))
-    # for e in E:
-    #     V.add(e[0])
-    #     V.add(e[1])
-    # for v in V:
-    #     vertices[v] = g.insert_vertex(v)
-    # for e in E:
-    #     src = e[0]
-    #     dest=e[1]
-    #     g.insert_edge(vertices[src] , vertices[dest])
 
 
 initialize()
-
+g.page_rank()
+print(len(g.page_ranks))
+print(g.page_ranks.keys())
+print(g.page_ranks.values())
 
 def addWordsToSets(reci):
     list1 = trie.__search__(reci[0])
@@ -79,7 +69,7 @@ def addWordsToSets(reci):
 
     for key, val in list1.items():
         set1.__addToSet__(key, val)
-       # print(key, val)
+    # print(key, val)
     for key, val in list2.items():
         set2.__addToSet__(key, val)
     return set1, set2
@@ -114,6 +104,7 @@ def pretrazi(reci):
         final_arr = final_set.list
     print_pages()
 
+
 def print_pages():
     if len(final_arr) > 0:
         for val in final_arr[vidjeno_strana:broj_strana]:
@@ -140,7 +131,7 @@ while True:
             pretrazi(reci)  # elif opcija == 3:
         elif opcija == 3:
             step = int(input("Unesite broj linkova po stranici:\t"))
-            broj_strana = vidjeno_strana +step
+            broj_strana = vidjeno_strana + step
             print_pages()
         elif opcija == 4:
             vidjeno_strana = broj_strana
@@ -150,8 +141,6 @@ while True:
             broj_strana = vidjeno_strana
             vidjeno_strana = vidjeno_strana - step
             print_pages()
-
-
     except Exception as e:
         print(e)
         print("--------------------Unesite broj kao opciju.--------------------- \n")
